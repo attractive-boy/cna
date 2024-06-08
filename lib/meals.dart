@@ -14,8 +14,7 @@ class MealsPage extends StatefulWidget {
 
 class _MealsPageState extends State<MealsPage> {
   final MyDatabase _db = MyDatabase();
-  UserInfoData? _userInfo;
-  Map<String, dynamic> calculatedValues = {};
+  late Calory calculatedValues;
   List<dynamic> meals = [];
   List<String> mealsType = ["Breakfast", "Lunch", "Dinner", "Snack"];
   List<dynamic> food_infos = [];
@@ -23,34 +22,14 @@ class _MealsPageState extends State<MealsPage> {
   @override
   void initState() {
     super.initState();
-    _loadUserInfo();
+    _initMeals();
   }
 
-  Future<void> _loadUserInfo() async {
-    final users = await _db.getAllUsers();
-
-    if (users.isNotEmpty) {
-      setState(() {
-        _userInfo = users.first;
-
-        // 获取 wantTo 的第一个字母
-        String wantToFirstLetter = _userInfo!.wantTo.substring(0, 1);
-
-        // 构建参数并调用 calculateMacros 函数
-        calculatedValues = calculateMacros(
-          double.tryParse(_userInfo!.age) ?? 0,
-          double.tryParse(_userInfo!.weight) ?? 0,
-          (double.tryParse(_userInfo!.heightFt) ?? 0),
-          _userInfo!.sex,
-          wantToFirstLetter,
-          double.tryParse(_userInfo!.bodyFat) ?? 0,
-          1.55,
-          _userInfo!.preferredDiet.toLowerCase(),
-        );
-
-        // 发起API请求获取今天的四顿饭
-        _fetchMeals();
-      });
+  Future<void> _initMeals() async {
+    final calories = await _db.getAllCaloriesEntries();
+    if(calories.isNotEmpty){
+      calculatedValues = calories.first;
+      _fetchMeals();
     }
   }
 
@@ -236,61 +215,7 @@ class _MealsPageState extends State<MealsPage> {
     }
   }
 
-  static Map<String, dynamic> calculateMacros(double age, double weight,
-      double height, String gender, String goal, double bodyfat,
-      double activityLevel, String presetDiet) {
-    double n;
-    n = ((10 * (1 / 2.2046) * weight + 15.875 * height - 5 * age +
-        (gender == "M" ? 5 : gender == "F" ? -161 : -78)) * activityLevel)
-        .toInt()
-        .toDouble();
-    double minCarbs = 0;
-    double minFats = 0;
-    double minProteins = 0;
-    bool cappedMinCalories = false;
 
-    if (presetDiet == "atkins / ketogenic") {
-      minCarbs = 0;
-      minFats = 0.8 * weight;
-      minProteins = 0.3 * weight;
-    } else if (presetDiet == "paleo") {
-      minCarbs = 0.3 * weight;
-      minFats = 0.4 * weight;
-      minProteins = 0.3 * weight;
-    } else if (presetDiet == "mediterranean") {
-      minCarbs = 0.4 * weight;
-      minFats = 0.3 * weight;
-      minProteins = 0.3 * weight;
-    } else if (presetDiet == "zone") {
-      minCarbs = 0.4 * weight;
-      minFats = 0.3 * weight;
-      minProteins = 0.3 * weight;
-    } else if (presetDiet == "vegetarian") {
-      minCarbs = 0.5 * weight;
-      minFats = 0.2 * weight;
-      minProteins = 0.3 * weight;
-    } else if (presetDiet == "vegan") {
-      minCarbs = 0.6 * weight;
-      minFats = 0.2 * weight;
-      minProteins = 0.2 * weight;
-    }
-
-    double calories = 4 * minCarbs + 9 * minFats + 4 * minProteins;
-    double maxCarbs = (0.5 * calories / 4).ceil().toDouble();
-    double maxFats = (0.5 * calories / 9).ceil().toDouble();
-    double maxProteins = (0.5 * calories / 4).ceil().toDouble();
-
-    return {
-      'calories': calories,
-      'min_carbs': minCarbs,
-      'min_fats': minFats,
-      'min_proteins': minProteins,
-      'max_carbs': maxCarbs,
-      'max_fats': maxFats,
-      'max_proteins': maxProteins,
-      'capped_min_calories': cappedMinCalories
-    };
-  }
 
   @override
   Widget build(BuildContext context) {

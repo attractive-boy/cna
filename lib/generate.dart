@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'calories.dart';
 import 'database.dart';
 
 class GeneratePage extends StatefulWidget {
@@ -18,7 +19,6 @@ class _GeneratePageState extends State<GeneratePage> {
 
   final List<String> _titles = [
     'What do you like to eat?',
-    // 'Are there foods you avoid?',
     'How do you measure things?',
     'What is your goal?',
     'Tell us about yourself',
@@ -27,7 +27,6 @@ class _GeneratePageState extends State<GeneratePage> {
 
   final List<String> _subtitles = [
     'Choose from a pre-set diet. You can fine-tune the excluded foods later.',
-    // 'This may be due to allergies or any other reason.',
     'We will use this to set goals and display amounts in recipes.',
     'This information lets us suggest meals to help you reach your goal.',
     'This information lets us estimate your nutrition requirements for each day.',
@@ -35,24 +34,6 @@ class _GeneratePageState extends State<GeneratePage> {
   ];
 
   UserOptions selectedOptions = UserOptions();
-
-  final Map<String, List<String>> avoidFoods = {
-    'Dairy': ['Dairy', 'Milk', 'Cream', 'Cheese', 'Yogurt', 'Cottage Cheese', 'Whey Powder'],
-    'Eggs': ['Eggs'],
-    'Grains': ['Grains', 'Breakfast Cereals', 'Pastas', 'Breads', 'Rice', 'Oatmeal', 'Sugar'],
-    'Soy': ['Soy', 'Tofu', 'Soy Milk'],
-    'Red Meat': ['Red Meat', 'Beef', 'Pork/Bacon', 'Lamb', 'Veal'],
-    'Poultry': ['Poultry', 'Chicken', 'Turkey'],
-    'Fish': ['Fish', 'Salmon', 'Tuna', 'Tilapia', 'Sardines', 'Trout & Snapper'],
-    'Shellfish': ['Shellfish'],
-    'Mayo': ['Mayo'],
-    'Fats & Nuts': ['Fats & Nuts', 'Avocados', 'Peanuts', 'Almonds', 'Walnuts', 'Pecans'],
-    'Legumes': ['Legumes', 'Beans', 'Lentils', 'Peas'],
-    'Fruit': ['Fruit', 'Apple', 'Banana', 'Grapes', 'Orange', 'Strawberries', 'Raspberries', 'Blueberries', 'Fruit juice'],
-    'Vegetables': ['Vegetables', 'Artichoke', 'Asparagus', 'Beets', 'Broccoli', 'Carrots', 'Sprouts', 'Celery', 'Peppers', 'Tomato', 'Eggplant'],
-    'Starchy Vegetables': ['Starchy Vegetables', 'Potatoes & Yams', 'Corn'],
-    'Honey': ['Honey']
-  };
 
   var selectAvoidFoods = Set<String>();
 
@@ -77,10 +58,8 @@ class _GeneratePageState extends State<GeneratePage> {
       preferredDiet: drift.Value(selectedOptions.preferredDiet),
       preferredUnits: drift.Value(selectedOptions.preferredUnits),
       goal: drift.Value(selectedOptions.goal),
-      // avoidFoods: drift.Value(selectAvoidFoods.toSet()),
       sex: drift.Value(selectedOptions.sex),
       heightFt: drift.Value(selectedOptions.heightFt),
-      // heightIn: drift.Value(selectedOptions.heightIn),
       weight: drift.Value(selectedOptions.weight),
       age: drift.Value(selectedOptions.age),
       bodyFat: drift.Value(selectedOptions.bodyFat),
@@ -92,6 +71,8 @@ class _GeneratePageState extends State<GeneratePage> {
 
     await _db.deleteAllUsers();
     await _db.insertUser(userInfo);
+
+    await _SaveUserCaloriesInfo();
   }
 
   void _onStepContinue() async {
@@ -197,55 +178,6 @@ class _GeneratePageState extends State<GeneratePage> {
         isActive: _currentStep >= 0,
         state: _currentStep >= 0 ? StepState.complete : StepState.disabled,
       ),
-      // Step(
-      //   title: const Text(''),
-      //   content: Padding(
-      //     padding: const EdgeInsets.all(10.0),
-      //     child: SingleChildScrollView(
-      //       child: Column(
-      //         children: avoidFoods.keys.map((category) {
-      //           return Column(
-      //             crossAxisAlignment: CrossAxisAlignment.start,
-      //             children: <Widget>[
-      //               Text(
-      //                 category,
-      //                 style: const TextStyle(
-      //                   fontSize: 20,
-      //                   fontWeight: FontWeight.bold,
-      //                   color: Colors.deepPurple,
-      //                 ),
-      //               ),
-      //               Wrap(
-      //                 spacing: 10.0,
-      //                 runSpacing: 10.0,
-      //                 children: avoidFoods[category]!.map((food) {
-      //                   return FilterChip(
-      //                     label: Text(food),
-      //                     selected: selectAvoidFoods.contains(food),
-      //                     onSelected: (bool selected) {
-      //                       setState(() {
-      //                         if (selected) {
-      //                           selectAvoidFoods.add(food);
-      //                         } else {
-      //                           selectAvoidFoods.remove(food);
-      //                         }
-      //                       });
-      //                     },
-      //                     selectedColor: Colors.deepPurple,
-      //                     backgroundColor: Colors.grey[200],
-      //                   );
-      //                 }).toList(),
-      //               ),
-      //               const Divider(),
-      //             ],
-      //           );
-      //         }).toList(),
-      //       ),
-      //     ),
-      //   ),
-      //   isActive: _currentStep >= 1,
-      //   state: _currentStep >= 1 ? StepState.complete : StepState.disabled,
-      // ),
       Step(
         title: const Text(''),
         content: Row(
@@ -627,6 +559,43 @@ class _GeneratePageState extends State<GeneratePage> {
     ];
   }
 
+  Future<void> _SaveUserCaloriesInfo() async {
+    final users = await _db.getAllUsers();
+
+    if (users.isNotEmpty) {
+        _userInfo = users.first;
+        // 获取 wantTo 的第一个字母
+        String wantToFirstLetter = _userInfo!.wantTo.substring(0, 1);
+        Map<String,double> bodyfatDic = {
+          "Low":10,
+          "Medium":20,
+          "Height":30
+        };
+
+        Map<String,double> ActivityLevDic = {
+          'Desk job, light exercise':1.2,
+          'Lightly active, workout 3-4 times/week':1.375,
+          'Active daily, frequent exercise':1.55,
+          'Very Athletic':1.725,
+          'Extremely Athletic':1.9
+        };
+
+        // 构建参数并调用 calculateMacros 函数
+        CaloriesCompanion calculatedValues = MacroCalculator.calculateMacros(
+          double.tryParse(_userInfo!.age) ?? 0,
+          double.tryParse(_userInfo!.weight) ?? 0,
+          (double.tryParse(_userInfo!.heightFt) ?? 0),
+          _userInfo!.sex.isNotEmpty ? _userInfo!.sex.substring(0, 1) : '',
+          wantToFirstLetter,
+          bodyfatDic[_userInfo!.bodyFat] ?? 20,
+            ActivityLevDic[_userInfo!.activityLevel] ?? 1.55,
+          _userInfo!.preferredDiet.toLowerCase()
+        );
+        await _db.clearCalories();
+        await _db.insertCalories(calculatedValues);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Text title = Text(_titles[_currentStep]);
@@ -694,10 +663,4 @@ class UserOptions {
     wantTo = userInfo.wantTo;
     targetWeight = userInfo.targetWeight;
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: GeneratePage(),
-  ));
 }

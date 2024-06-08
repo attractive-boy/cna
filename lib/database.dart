@@ -31,7 +31,20 @@ class Meals extends Table {
   TextColumn get foodInfos => text()(); // 修正 food_infos 为 foodInfos 以保持一致
 }
 
-@DriftDatabase(tables: [UserInfo,Meals])
+class Calories extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  RealColumn get calories => real()();
+  RealColumn get minCarbs => real()();
+  RealColumn get minFats => real()();
+  RealColumn get minProteins => real()();
+  RealColumn get maxCarbs => real()();
+  RealColumn get maxFats => real()();
+  RealColumn get maxProteins => real()();
+  BoolColumn get cappedMinCalories => boolean()();
+}
+
+
+@DriftDatabase(tables: [UserInfo,Meals,Calories])
 class MyDatabase extends _$MyDatabase {
   // 私有的静态实例
   static MyDatabase? _instance;
@@ -78,6 +91,20 @@ class MyDatabase extends _$MyDatabase {
   Future<int> insertMeal(MealsCompanion meal) {
     return into(meals).insert(meal);
   }
+
+
+  // 插入数据到 Calories 表的方法
+  Future<int> insertCalories(CaloriesCompanion entry) {
+    return into(calories).insert(entry);
+  }
+
+  // 清空 Calories 表的方法
+  Future<int> clearCalories() {
+    return delete(calories).go();
+  }
+
+  // 查询所有 Calories 数据的方法
+  Future<List<Calory>> getAllCaloriesEntries() => select(calories).get();
 }
 
 LazyDatabase _openConnection() {

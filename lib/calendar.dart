@@ -117,18 +117,21 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               SizedBox(height: 20),
               // 两个按钮，垂直排列，宽度一致
-              Center(
-                child: SizedBox(
-                width: 200, // 设置按钮的固定宽度
+              Container(
+                width: double.infinity, // 占满一行
+                padding: EdgeInsets.symmetric(horizontal: 20), // 添加左右间距
                 child: ElevatedButton(
                   onPressed: () => _onShowPressed(context),
-                  child: Text('Show Meals', style: TextStyle(fontSize: 20)),
+                  child: Text('Show Meals', style: TextStyle(fontSize: 20, color: Colors.white)),
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange, // 主题色背景
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8), // 圆角
+                    ),
                     padding: EdgeInsets.symmetric(vertical: 15),
                   ),
                 ),
-              )
-              )
+              ),
             ],
           ),
         ),
