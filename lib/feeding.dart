@@ -153,6 +153,24 @@ class _FeedingPageState extends State<FeedingPage> {
                     ),
                   ),
                   SizedBox(height: 20),
+
+                  Container(
+                    width: double.infinity, // 占满一行
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GeneratePage()),
+                      ),
+                      child: Text('Edit User Info', style: TextStyle(fontSize: 20, color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange, // 主题色背景
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8), // 圆角
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -202,7 +220,10 @@ class _FeedingPageState extends State<FeedingPage> {
           width: double.infinity, // 占满一行
           padding: EdgeInsets.symmetric(horizontal: 20), // 添加左右间距
           child: ElevatedButton(
-            onPressed: () => _onGeneratePressed(context),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => GeneratePage()),
+            ),
             child: Text('Edit User Info', style: TextStyle(fontSize: 20, color: Colors.white)),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange, // 主题色背景
