@@ -12,13 +12,13 @@ class GeneratePage extends StatefulWidget {
 
 class _GeneratePageState extends State<GeneratePage> {
   int _currentStep = 0;
-  MyDatabase _db = MyDatabase();
+  final MyDatabase _db = MyDatabase();
 
   UserInfoData? _userInfo;
 
   final List<String> _titles = [
     'What do you like to eat?',
-    'Are there foods you avoid?',
+    // 'Are there foods you avoid?',
     'How do you measure things?',
     'What is your goal?',
     'Tell us about yourself',
@@ -27,35 +27,31 @@ class _GeneratePageState extends State<GeneratePage> {
 
   final List<String> _subtitles = [
     'Choose from a pre-set diet. You can fine-tune the excluded foods later.',
-    'This may be due to allergies or any other reason.',
+    // 'This may be due to allergies or any other reason.',
     'We will use this to set goals and display amounts in recipes.',
     'This information lets us suggest meals to help you reach your goal.',
     'This information lets us estimate your nutrition requirements for each day.',
     ''
   ];
 
-  Map<String, String> selectedOptions = {
-    'preferred_diet': '',
-    'preferred_units': 'U.S. Standard',
-    'goal':'General Goal'
-  };
+  UserOptions selectedOptions = UserOptions();
 
-  Map<String,List<String>> avoidFoods = {
-    'Dairy':['Dairy','Milk','Cream','Cheese','Yogurt','Cottage Cheese','Whey Powder'],
-    'Eggs':['Eggs'],
-    'Grains':['Grains','Breakfast Cereals','Pastas','Breads','Rice','Oatmeal','Sugar'],
-    'Soy':['Soy','Tofu','Soy Milk'],
-    'Red Meat':['Red Meat','Beef','Pork/Bacon','Lamb','Veal'],
-    'Poultry':['Poultry','Chicken','Turkey'],
-    'Fish':['Fish','Salmon','Tuna','Tilapia','Sardines','Trout & Snapper'],
-    'Shellfish':['Shellfish'],
-    'Mayo':['Mayo'],
-    'Fats & Nuts':['Fats & Nuts','Avocados','Peanuts','Almonds','Walnuts','Pecans'],
-    'Legumes':['Legumes','Beans','Lentils','Peas'],
-    'Fruit':['Fruit','Apple','Banana','Grapes','Orange','Strawberries','Raspberries','Blueberries','Fruit juice'],
-    'Vegetables':['Vegetables','Artichoke','Asparagus','Beets','Broccoli','Carrots','Sprouts','Celery','Peppers','Tomato','Eggplant'],
-    'Starchy Vegetables':['Starchy Vegetables','Potatoes & Yams','Corn'],
-    'Honey':['Honey']
+  final Map<String, List<String>> avoidFoods = {
+    'Dairy': ['Dairy', 'Milk', 'Cream', 'Cheese', 'Yogurt', 'Cottage Cheese', 'Whey Powder'],
+    'Eggs': ['Eggs'],
+    'Grains': ['Grains', 'Breakfast Cereals', 'Pastas', 'Breads', 'Rice', 'Oatmeal', 'Sugar'],
+    'Soy': ['Soy', 'Tofu', 'Soy Milk'],
+    'Red Meat': ['Red Meat', 'Beef', 'Pork/Bacon', 'Lamb', 'Veal'],
+    'Poultry': ['Poultry', 'Chicken', 'Turkey'],
+    'Fish': ['Fish', 'Salmon', 'Tuna', 'Tilapia', 'Sardines', 'Trout & Snapper'],
+    'Shellfish': ['Shellfish'],
+    'Mayo': ['Mayo'],
+    'Fats & Nuts': ['Fats & Nuts', 'Avocados', 'Peanuts', 'Almonds', 'Walnuts', 'Pecans'],
+    'Legumes': ['Legumes', 'Beans', 'Lentils', 'Peas'],
+    'Fruit': ['Fruit', 'Apple', 'Banana', 'Grapes', 'Orange', 'Strawberries', 'Raspberries', 'Blueberries', 'Fruit juice'],
+    'Vegetables': ['Vegetables', 'Artichoke', 'Asparagus', 'Beets', 'Broccoli', 'Carrots', 'Sprouts', 'Celery', 'Peppers', 'Tomato', 'Eggplant'],
+    'Starchy Vegetables': ['Starchy Vegetables', 'Potatoes & Yams', 'Corn'],
+    'Honey': ['Honey']
   };
 
   var selectAvoidFoods = Set<String>();
@@ -71,54 +67,31 @@ class _GeneratePageState extends State<GeneratePage> {
     if (users.isNotEmpty) {
       setState(() {
         _userInfo = users.first;
-        selectedOptions['preferred_diet'] = _userInfo!.preferredDiet;
-        selectedOptions['preferred_units'] = _userInfo!.preferredUnits;
-        selectedOptions['goal'] = _userInfo!.goal;
-        selectAvoidFoods = _userInfo!.avoidFoods;
-        selectedOptions['Sex'] = _userInfo!.sex;
-        selectedOptions['height_ft'] = _userInfo!.heightFt;
-        selectedOptions['height_in'] = _userInfo!.heightIn;
-        selectedOptions['weight'] = _userInfo!.weight;
-        selectedOptions['age'] = _userInfo!.age;
-        selectedOptions['body_fat'] = _userInfo!.bodyFat;
-        selectedOptions['activity_level'] = _userInfo!.activityLevel;
+        selectedOptions.fromUserInfo(_userInfo!);
       });
     }
   }
 
   Future<void> _saveUserInfo() async {
     final userInfo = UserInfoCompanion(
-      preferredDiet: drift.Value(selectedOptions['preferred_diet']!),
-      preferredUnits: drift.Value(selectedOptions['preferred_units']!),
-      goal: drift.Value(selectedOptions['goal']!),
-      avoidFoods: drift.Value(selectAvoidFoods),
-      sex: drift.Value(selectedOptions['Sex']!),
-      heightFt: drift.Value(selectedOptions['height_ft']!),
-      heightIn: drift.Value(selectedOptions['height_in']!),
-      weight: drift.Value(selectedOptions['weight']!),
-      age: drift.Value(selectedOptions['age']!),
-      bodyFat: drift.Value(selectedOptions['body_fat']!),
-      activityLevel: drift.Value(selectedOptions['activity_level']!),
+      preferredDiet: drift.Value(selectedOptions.preferredDiet),
+      preferredUnits: drift.Value(selectedOptions.preferredUnits),
+      goal: drift.Value(selectedOptions.goal),
+      // avoidFoods: drift.Value(selectAvoidFoods.toSet()),
+      sex: drift.Value(selectedOptions.sex),
+      heightFt: drift.Value(selectedOptions.heightFt),
+      // heightIn: drift.Value(selectedOptions.heightIn),
+      weight: drift.Value(selectedOptions.weight),
+      age: drift.Value(selectedOptions.age),
+      bodyFat: drift.Value(selectedOptions.bodyFat),
+      activityLevel: drift.Value(selectedOptions.activityLevel),
+      weightGoal: drift.Value(selectedOptions.weightGoal),
+      wantTo: drift.Value(selectedOptions.wantTo),
+      targetWeight: drift.Value(selectedOptions.targetWeight),
     );
 
-    if (_userInfo == null) {
-      await _db.insertUser(userInfo);
-    } else {
-      await _db.updateUser(UserInfoData(
-        id: _userInfo!.id,
-        preferredDiet: selectedOptions['preferred_diet']!,
-        preferredUnits: selectedOptions['preferred_units']!,
-        goal: selectedOptions['goal']!,
-        avoidFoods: selectAvoidFoods,
-        sex: selectedOptions['Sex']!,
-        heightFt: selectedOptions['height_ft']!,
-        heightIn: selectedOptions['height_in']!,
-        weight: selectedOptions['weight']!,
-        age: selectedOptions['age']!,
-        bodyFat: selectedOptions['body_fat']!,
-        activityLevel: selectedOptions['activity_level']!,
-      ));
-    }
+    await _db.deleteAllUsers();
+    await _db.insertUser(userInfo);
   }
 
   void _onStepContinue() async {
@@ -128,7 +101,7 @@ class _GeneratePageState extends State<GeneratePage> {
       });
     } else {
       await _saveUserInfo();
-      // 在完成所有步骤后，可以执行其他操作，例如导航到另一个页面
+      Navigator.pop(context);
     }
   }
 
@@ -183,41 +156,40 @@ class _GeneratePageState extends State<GeneratePage> {
     );
   }
 
-
   List<Step> _generateSteps() {
     return [
       Step(
         title: const Text(''),
         content: Column(
           children: <Widget>[
-            _buildOptionCard('Anything', 'assets/anything.svg', 'Anything', 'Excludes: Nothing', selectedOptions['preferred_diet']!, (value) {
+            _buildOptionCard('Anything', 'assets/anything.svg', 'Anything', 'Excludes: Nothing', selectedOptions.preferredDiet, (value) {
               setState(() {
-                selectedOptions['preferred_diet'] = value!;
+                selectedOptions.preferredDiet = value!;
               });
             }),
-            _buildOptionCard('Keto', 'assets/keto.svg', 'Keto', 'Excludes: Grains, Legumes, Starchy Vegetables', selectedOptions['preferred_diet']!, (value) {
+            _buildOptionCard('Keto', 'assets/keto.svg', 'Keto', 'Excludes: Grains, Legumes, Starchy Vegetables', selectedOptions.preferredDiet, (value) {
               setState(() {
-                selectedOptions['preferred_diet'] = value!;
+                selectedOptions.preferredDiet = value!;
               });
             }),
-            _buildOptionCard('Mediterranean', 'assets/mediterranean.svg', 'Mediterranean', 'Excludes: Red Meat, Fruit juice, Starchy Vegetables', selectedOptions['preferred_diet']!, (value) {
+            _buildOptionCard('Mediterranean', 'assets/mediterranean.svg', 'Mediterranean', 'Excludes: Red Meat, Fruit juice, Starchy Vegetables', selectedOptions.preferredDiet, (value) {
               setState(() {
-                selectedOptions['preferred_diet'] = value!;
+                selectedOptions.preferredDiet = value!;
               });
             }),
-            _buildOptionCard('Paleo', 'assets/paleo.svg', 'Paleo', 'Excludes: Dairy, Grains, Legumes, Soy, Starchy Vegetables', selectedOptions['preferred_diet']!, (value) {
+            _buildOptionCard('Paleo', 'assets/paleo.svg', 'Paleo', 'Excludes: Dairy, Grains, Legumes, Soy, Starchy Vegetables', selectedOptions.preferredDiet, (value) {
               setState(() {
-                selectedOptions['preferred_diet'] = value!;
+                selectedOptions.preferredDiet = value!;
               });
             }),
-            _buildOptionCard('Vegan', 'assets/vegan.svg', 'Vegan', 'Excludes: Red Meat, Poultry, Fish, Shellfish, Dairy, Eggs, Mayo, Honey', selectedOptions['preferred_diet']!, (value) {
+            _buildOptionCard('Vegan', 'assets/vegan.svg', 'Vegan', 'Excludes: Red Meat, Poultry, Fish, Shellfish, Dairy, Eggs, Mayo, Honey', selectedOptions.preferredDiet, (value) {
               setState(() {
-                selectedOptions['preferred_diet'] = value!;
+                selectedOptions.preferredDiet = value!;
               });
             }),
-            _buildOptionCard('Vegetarian', 'assets/vegetarian.svg', 'Vegetarian', 'Excludes: Red Meat, Poultry, Fish, Shellfish', selectedOptions['preferred_diet']!, (value) {
+            _buildOptionCard('Vegetarian', 'assets/vegetarian.svg', 'Vegetarian', 'Excludes: Red Meat, Poultry, Fish, Shellfish', selectedOptions.preferredDiet, (value) {
               setState(() {
-                selectedOptions['preferred_diet'] = value!;
+                selectedOptions.preferredDiet = value!;
               });
             }),
           ],
@@ -225,55 +197,55 @@ class _GeneratePageState extends State<GeneratePage> {
         isActive: _currentStep >= 0,
         state: _currentStep >= 0 ? StepState.complete : StepState.disabled,
       ),
-      Step(
-        title: const Text(''),
-        content: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: avoidFoods.keys.map((category) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      category,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
-                      ),
-                    ),
-                    Wrap(
-                      spacing: 10.0,
-                      runSpacing: 10.0,
-                      children: avoidFoods[category]!.map((food) {
-                        return FilterChip(
-                          label: Text(food),
-                          selected: selectAvoidFoods.contains(food),
-                          onSelected: (bool selected) {
-                            setState(() {
-                              if (selected) {
-                                selectAvoidFoods.add(food);
-                              } else {
-                                selectAvoidFoods.remove(food);
-                              }
-                            });
-                          },
-                          selectedColor: Colors.deepPurple,
-                          backgroundColor: Colors.grey[200],
-                        );
-                      }).toList(),
-                    ),
-                    const Divider(),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-        isActive: _currentStep >= 1,
-        state: _currentStep >= 1 ? StepState.complete : StepState.disabled,
-      ),
+      // Step(
+      //   title: const Text(''),
+      //   content: Padding(
+      //     padding: const EdgeInsets.all(10.0),
+      //     child: SingleChildScrollView(
+      //       child: Column(
+      //         children: avoidFoods.keys.map((category) {
+      //           return Column(
+      //             crossAxisAlignment: CrossAxisAlignment.start,
+      //             children: <Widget>[
+      //               Text(
+      //                 category,
+      //                 style: const TextStyle(
+      //                   fontSize: 20,
+      //                   fontWeight: FontWeight.bold,
+      //                   color: Colors.deepPurple,
+      //                 ),
+      //               ),
+      //               Wrap(
+      //                 spacing: 10.0,
+      //                 runSpacing: 10.0,
+      //                 children: avoidFoods[category]!.map((food) {
+      //                   return FilterChip(
+      //                     label: Text(food),
+      //                     selected: selectAvoidFoods.contains(food),
+      //                     onSelected: (bool selected) {
+      //                       setState(() {
+      //                         if (selected) {
+      //                           selectAvoidFoods.add(food);
+      //                         } else {
+      //                           selectAvoidFoods.remove(food);
+      //                         }
+      //                       });
+      //                     },
+      //                     selectedColor: Colors.deepPurple,
+      //                     backgroundColor: Colors.grey[200],
+      //                   );
+      //                 }).toList(),
+      //               ),
+      //               const Divider(),
+      //             ],
+      //           );
+      //         }).toList(),
+      //       ),
+      //     ),
+      //   ),
+      //   isActive: _currentStep >= 1,
+      //   state: _currentStep >= 1 ? StepState.complete : StepState.disabled,
+      // ),
       Step(
         title: const Text(''),
         content: Row(
@@ -284,7 +256,7 @@ class _GeneratePageState extends State<GeneratePage> {
               style: TextStyle(fontSize: 18),
             ),
             DropdownButton<String>(
-              value: selectedOptions['preferred_units'],
+              value: selectedOptions.preferredUnits,
               icon: Icon(Icons.arrow_downward),
               iconSize: 24,
               elevation: 16,
@@ -295,10 +267,10 @@ class _GeneratePageState extends State<GeneratePage> {
               ),
               onChanged: (String? newValue) {
                 setState(() {
-                  selectedOptions['preferred_units'] = newValue!;
+                  selectedOptions.preferredUnits = newValue!;
                 });
               },
-              items: <String>['U.S. Standard', 'Metric']
+              items: <String>['Metric']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -323,7 +295,7 @@ class _GeneratePageState extends State<GeneratePage> {
                   style: TextStyle(fontSize: 18),
                 ),
                 DropdownButton<String>(
-                  value: selectedOptions['goal'],
+                  value: selectedOptions.goal,
                   icon: Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
@@ -334,7 +306,7 @@ class _GeneratePageState extends State<GeneratePage> {
                   ),
                   onChanged: (String? newValue) {
                     setState(() {
-                      selectedOptions['goal'] = newValue!;
+                      selectedOptions.goal = newValue!;
                     });
                   },
                   items: <String>['General Goal', 'Exact Goal']
@@ -348,7 +320,7 @@ class _GeneratePageState extends State<GeneratePage> {
               ],
             ),
             const Divider(),
-            if (selectedOptions['goal'] == 'General Goal') ...[
+            if (selectedOptions.goal == 'General Goal') ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -357,7 +329,7 @@ class _GeneratePageState extends State<GeneratePage> {
                     style: TextStyle(fontSize: 18),
                   ),
                   DropdownButton<String>(
-                    value: selectedOptions['wantTo'],
+                    value: selectedOptions.wantTo,
                     icon: const Icon(Icons.arrow_downward),
                     iconSize: 24,
                     elevation: 16,
@@ -368,7 +340,7 @@ class _GeneratePageState extends State<GeneratePage> {
                     ),
                     onChanged: (String? newValue) {
                       setState(() {
-                        selectedOptions['wantTo'] = newValue!;
+                        selectedOptions.wantTo = newValue!;
                       });
                     },
                     items: <String>['Lose fat', 'Maintain weight', 'Build muscle']
@@ -381,7 +353,7 @@ class _GeneratePageState extends State<GeneratePage> {
                   ),
                 ],
               ),
-            ] else if (selectedOptions['goal'] == 'Exact Goal') ...[
+            ] else if (selectedOptions.goal == 'Exact Goal') ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -394,12 +366,12 @@ class _GeneratePageState extends State<GeneratePage> {
                     child: TextField(
                       decoration: const InputDecoration(
                         // labelText: 'Enter value',
-                        suffixText: 'lbs',
+                        suffixText: 'kgs',
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (text) {
                         setState(() {
-                          selectedOptions['weight_goal'] = text;
+                          selectedOptions.weightGoal = text;
                         });
                       },
                     ),
@@ -419,12 +391,12 @@ class _GeneratePageState extends State<GeneratePage> {
                     child: TextField(
                       decoration: const InputDecoration(
                         // labelText: 'Enter value',
-                        suffixText: 'lbs a week',
+                        suffixText: 'kgs a week',
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (text) {
                         setState(() {
-                          selectedOptions['target_weight'] = text;
+                          selectedOptions.targetWeight = text;
                         });
                       },
                     ),
@@ -449,7 +421,7 @@ class _GeneratePageState extends State<GeneratePage> {
                   style: TextStyle(fontSize: 18),
                 ),
                 DropdownButton<String>(
-                  value: selectedOptions['Sex'],
+                  value: selectedOptions.sex,
                   icon: Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
@@ -460,7 +432,7 @@ class _GeneratePageState extends State<GeneratePage> {
                   ),
                   onChanged: (String? newValue) {
                     setState(() {
-                      selectedOptions['Sex'] = newValue!;
+                      selectedOptions.sex = newValue!;
                     });
                   },
                   items: <String>['Male', 'Female', 'Non-Binary']
@@ -486,31 +458,16 @@ class _GeneratePageState extends State<GeneratePage> {
                   child: TextField(
                     decoration: const InputDecoration(
                       // labelText: 'Enter value',
-                      suffixText: 'ft',
+                      suffixText: 'cm',
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (text) {
                       setState(() {
-                        selectedOptions['height_ft'] = text;
+                        selectedOptions.heightFt = text;
                       });
                     },
                   ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      // labelText: 'Enter value',
-                      suffixText: 'in',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        selectedOptions['height_in'] = text;
-                      });
-                    },
-                  ),
-                ),
+                )
               ],
             ),
             const Divider(),
@@ -526,12 +483,12 @@ class _GeneratePageState extends State<GeneratePage> {
                   child: TextField(
                     decoration: const InputDecoration(
                       // labelText: 'Enter value',
-                      suffixText: 'lbs',
+                      suffixText: 'kgs',
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (text) {
                       setState(() {
-                        selectedOptions['weight'] = text;
+                        selectedOptions.weight = text;
                       });
                     },
                   ),
@@ -556,7 +513,7 @@ class _GeneratePageState extends State<GeneratePage> {
                     ),
                     onChanged: (text) {
                       setState(() {
-                        selectedOptions['age'] = text;
+                        selectedOptions.age = text;
                       });
                     },
                   ),
@@ -572,7 +529,7 @@ class _GeneratePageState extends State<GeneratePage> {
                   style: TextStyle(fontSize: 18),
                 ),
                 DropdownButton<String>(
-                  value: selectedOptions['body_fat'],
+                  value: selectedOptions.bodyFat,
                   icon: Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
@@ -583,7 +540,7 @@ class _GeneratePageState extends State<GeneratePage> {
                   ),
                   onChanged: (String? newValue) {
                     setState(() {
-                      selectedOptions['body_fat'] = newValue!;
+                      selectedOptions.bodyFat = newValue!;
                     });
                   },
                   items: <String>['Low', 'Medium', 'High']
@@ -610,7 +567,7 @@ class _GeneratePageState extends State<GeneratePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 DropdownButton<String>(
-                  value: selectedOptions['activity_level'],
+                  value: selectedOptions.activityLevel,
                   icon: const Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
@@ -621,7 +578,7 @@ class _GeneratePageState extends State<GeneratePage> {
                   ),
                   onChanged: (String? newValue) {
                     setState(() {
-                      selectedOptions['activity_level'] = newValue!;
+                      selectedOptions.activityLevel = newValue!;
                     });
                   },
                   items: <String>[
@@ -705,6 +662,37 @@ class _GeneratePageState extends State<GeneratePage> {
         },
       ),
     );
+  }
+}
+
+class UserOptions {
+  String preferredDiet = 'Anything';
+  String preferredUnits = 'Metric';
+  String goal = 'General Goal';
+  String sex = 'Male';
+  String heightFt = '0';
+  String heightIn = '0';
+  String weight = '0';
+  String age = '0';
+  String bodyFat = 'Low';
+  String activityLevel = 'Desk job, light exercise';
+  String weightGoal = '0';
+  String wantTo = 'Lose fat';
+  String targetWeight = '0';
+
+  void fromUserInfo(UserInfoData userInfo) {
+    preferredDiet = userInfo.preferredDiet;
+    preferredUnits = userInfo.preferredUnits;
+    goal = userInfo.goal;
+    sex = userInfo.sex;
+    heightFt = userInfo.heightFt;
+    weight = userInfo.weight;
+    age = userInfo.age;
+    bodyFat = userInfo.bodyFat;
+    activityLevel = userInfo.activityLevel;
+    weightGoal = userInfo.weightGoal;
+    wantTo = userInfo.wantTo;
+    targetWeight = userInfo.targetWeight;
   }
 }
 

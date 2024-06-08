@@ -2,6 +2,7 @@ import 'package:cna/chatbot.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'calendar.dart';
 import 'database.dart';
 import 'feeding.dart';
 import 'generate.dart';
@@ -9,14 +10,9 @@ import 'learning.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final database = MyDatabase();
 
-  runApp(
-    Provider<MyDatabase>(
-      create: (_) => database,
-      child: const MyApp(),
-    ),
-  );
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -175,8 +171,8 @@ class CalendarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Calendar Module'),
+    return Center(
+      child: CalendarPage()
     );
   }
 }

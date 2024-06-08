@@ -42,15 +42,13 @@ class _LearningPageState extends State<LearningPage> {
 
   void _filterResults() {
     // 实现筛选逻辑
-    print('筛选按钮被点击');
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Learning Page'),
-      ),
+
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -73,7 +71,7 @@ class _LearningPageState extends State<LearningPage> {
               ],
             ),
             _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? Expanded(child: Center(child: CircularProgressIndicator()))
                 : Expanded(
               child: ListView.builder(
                 itemCount: foods.length,

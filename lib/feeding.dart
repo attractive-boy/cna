@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'database.dart';
 import 'generate.dart';
+import 'meals.dart';
 
 class FeedingPage extends StatelessWidget {
   final MyDatabase _db = MyDatabase();
@@ -36,10 +39,10 @@ class FeedingPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             // 一行文字
-            Text(
-              'No meals planned yet',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+            // Text(
+            //   'No meals planned yet',
+            //   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            // ),
             SizedBox(height: 20),
             // 两个按钮，垂直排列，宽度一致
             SizedBox(
@@ -76,19 +79,6 @@ class FeedingPage extends StatelessWidget {
   }
 }
 
-class MealsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Today\'s Meals'),
-      ),
-      body: Center(
-        child: Text('Here will be today\'s meals.'),
-      ),
-    );
-  }
-}
 
 void main() {
   runApp(MaterialApp(
