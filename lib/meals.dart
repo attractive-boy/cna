@@ -222,8 +222,7 @@ class _MealsPageState extends State<MealsPage> {
       ),
       body: meals.isEmpty
           ? Center(child: CircularProgressIndicator())
-          : Expanded(
-        child: ListView.builder(
+          : ListView.builder(
           itemCount: meals.length,
           itemBuilder: (context, index) {
             final meal = meals[index];
@@ -286,7 +285,6 @@ class _MealsPageState extends State<MealsPage> {
             );
           },
         ),
-      ),
     );
   }
 }
