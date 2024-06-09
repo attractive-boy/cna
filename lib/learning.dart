@@ -57,6 +57,7 @@ class _LearningPageState extends State<LearningPage> {
     String query = _learningController.text;
     String filterQuery = _buildFilterQuery(query);
     _fetchData(filterQuery);
+    Navigator.of(context).pop(); // Close the drawer after fetching data
   }
 
   Future<void> _fetchData(String filterQuery) async {
@@ -74,7 +75,7 @@ class _LearningPageState extends State<LearningPage> {
         foods = data;
         _isLoading = false;
       });
-      Navigator.of(context).pop(); // Close the drawer after fetching data
+
     } else {
       setState(() {
         _isLoading = false;
