@@ -3,11 +3,14 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'FoodDetailPage.dart';
 import 'database.dart'; // 确保导入你项目中的数据库
 
 class MealsPage extends StatefulWidget {
   final DateTime? day;
-  const MealsPage({Key? key, this.day}) : super(key: key);
+  final double? eatcalories;
+  const MealsPage({Key? key, this.day, this.eatcalories}) : super(key: key);
+
   @override
   _MealsPageState createState() => _MealsPageState();
 }
@@ -68,7 +71,7 @@ class _MealsPageState extends State<MealsPage> {
             {
               "num_meals": 4,
               "nutrition_profile": {
-                "calories": 400,
+                "calories": widget.eatcalories ?? 400,
                 "cholesterol": 300,
                 "fiber": 25,
                 "macro_scheme": "grams",
@@ -218,7 +221,7 @@ class _MealsPageState extends State<MealsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Today's meals"),
+        title: Text("Today's Meals Plan"),
       ),
       body: meals.isEmpty
           ? Center(child: CircularProgressIndicator())
@@ -226,17 +229,38 @@ class _MealsPageState extends State<MealsPage> {
           itemCount: meals.length,
           itemBuilder: (context, index) {
             final meal = meals[index];
+            double totalCalories = meal['foods'].fold(0.0, (sum, food) {
+              var foodInfo = food_infos.firstWhere((item) {
+                return food['food_id'] == item['id'];
+              });
+              return sum + foodInfo['calories'];
+            });
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    '${mealsType[index]}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: Column(
+
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${mealsType[index]}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4), // 添加一点间距
+                      Text(
+                        '${totalCalories.toInt()} Calories', // 副标题文本
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 ...meal["foods"].map<Widget>((food) {
@@ -247,40 +271,63 @@ class _MealsPageState extends State<MealsPage> {
                       foodInfo['images'] != null &&
                       foodInfo['images'].isNotEmpty &&
                       foodInfo['images'][0]['thumbnail'] != null;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      children: [
-                        if (hasThumbnail)
-                          Image.network(
-                            'https://images.eatthismuch.com/' + foodInfo['images'][0]['thumbnail'],
-                            width: 50.0,
-                            height: 50.0,
-                            fit: BoxFit.cover,
-                          )
-                        else
-                          Image.network(
-                            'https://images.eatthismuch.com/' + foodInfo['icon_thumbnail'],
-                            width: 50.0,
-                            height: 50.0,
-                            fit: BoxFit.cover,
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FoodDetailPage(foodId: food['food_id']),
                           ),
-                        SizedBox(width: 16.0),
-                        // 右边的文本
-                        Expanded(
-                          child: Text(
-                            foodInfo['food_name'],
-                            style: TextStyle(fontSize: 16.0),
-                            softWrap: true,
-                            maxLines: null,
-                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            if (hasThumbnail)
+                              Image.network(
+                                'https://images.eatthismuch.com/' +
+                                    foodInfo['images'][0]['thumbnail'],
+                                width: 50.0,
+                                height: 50.0,
+                                fit: BoxFit.cover,
+                              )
+                            else
+                              Image.network(
+                                'https://images.eatthismuch.com/' +
+                                    foodInfo['icon_thumbnail'],
+                                width: 50.0,
+                                height: 50.0,
+                                fit: BoxFit.cover,
+                              ),
+                            SizedBox(width: 16.0),
+                            // 右边的文本和卡路里信息
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    foodInfo['food_name'],
+                                    style: TextStyle(fontSize: 16.0),
+                                    softWrap: true,
+                                    maxLines: null,
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${foodInfo['calories'].toInt()} cal',
+                                    style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 70.0),
-                      ],
+                      ),
                     ),
                   );
                 }).toList(),
-                Divider(),
               ],
             );
           },

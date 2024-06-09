@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'database.dart';
@@ -17,6 +18,14 @@ class _FeedingPageState extends State<FeedingPage> {
   void initState() {
     super.initState();
     _fetchCaloriesList();
+  }
+
+  String _calories = ''; // 定义一个全局变量存储卡路里值
+
+  void _updateCalories(String value) {
+    setState(() {
+      _calories = value;
+    });
   }
 
   Future<void> _fetchCaloriesList() async {
@@ -127,6 +136,7 @@ class _FeedingPageState extends State<FeedingPage> {
                     children: [
                       Expanded(
                         child: TextFormField(
+                          onChanged: _updateCalories,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: 'Enter calories',
@@ -248,7 +258,7 @@ class _FeedingPageState extends State<FeedingPage> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MealsPage()),
+        MaterialPageRoute(builder: (context) => MealsPage(eatcalories: double.tryParse(_calories) ?? 400)),
       );
     }
   }
