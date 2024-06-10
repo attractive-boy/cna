@@ -173,6 +173,16 @@ class _GeneratePageState extends State<GeneratePage> {
                 selectedOptions.preferredDiet = value!;
               });
             }),
+            _buildOptionCard('No Pork', 'assets/nopork.svg', 'No Pork', 'Excludes: Pork', selectedOptions.preferredDiet, (value) {
+              setState(() {
+                selectedOptions.preferredDiet = value!;
+              });
+            }),
+            _buildOptionCard('Nut Free', 'assets/nutfree.svg', 'Nut Free', 'Excludes: Nuts', selectedOptions.preferredDiet, (value) {
+              setState(() {
+                selectedOptions.preferredDiet = value!;
+              });
+            }),
           ],
         ),
         isActive: _currentStep >= 0,
