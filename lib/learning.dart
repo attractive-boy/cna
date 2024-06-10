@@ -57,7 +57,6 @@ class _LearningPageState extends State<LearningPage> {
     String query = _learningController.text;
     String filterQuery = _buildFilterQuery(query);
     _fetchData(filterQuery);
-    Navigator.of(context).pop(); // Close the drawer after fetching data
   }
 
   Future<void> _fetchData(String filterQuery) async {
@@ -454,7 +453,10 @@ class _LearningPageState extends State<LearningPage> {
               child: Container(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:  _filterResults,
+                  onPressed:  () => {
+                    _filterResults(),
+                    Navigator.of(context).pop()// Close the drawer after fetching data
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange, // 设置背景色为主题色
                   ),
