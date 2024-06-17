@@ -462,39 +462,39 @@ class _GeneratePageState extends State<GeneratePage> {
                 ),
               ],
             ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                const Text(
-                  'Bodyfat: ',
-                  style: TextStyle(fontSize: 18),
-                ),
-                DropdownButton<String>(
-                  value: selectedOptions.bodyFat,
-                  icon: Icon(Icons.arrow_downward),
-                  iconSize: 24,
-                  elevation: 16,
-                  style: TextStyle(color: Colors.deepPurple),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedOptions.bodyFat = newValue!;
-                    });
-                  },
-                  items: <String>['Low', 'Medium', 'High']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
+            // const Divider(),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: <Widget>[
+            //     const Text(
+            //       'Bodyfat: ',
+            //       style: TextStyle(fontSize: 18),
+            //     ),
+            //     DropdownButton<String>(
+            //       value: selectedOptions.bodyFat,
+            //       icon: Icon(Icons.arrow_downward),
+            //       iconSize: 24,
+            //       elevation: 16,
+            //       style: TextStyle(color: Colors.deepPurple),
+            //       underline: Container(
+            //         height: 2,
+            //         color: Colors.deepPurpleAccent,
+            //       ),
+            //       onChanged: (String? newValue) {
+            //         setState(() {
+            //           selectedOptions.bodyFat = newValue!;
+            //         });
+            //       },
+            //       items: <String>['Low', 'Medium', 'High']
+            //           .map<DropdownMenuItem<String>>((String value) {
+            //         return DropdownMenuItem<String>(
+            //           value: value,
+            //           child: Text(value),
+            //         );
+            //       }).toList(),
+            //     ),
+            //   ],
+            // ),
             const Divider(),
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
