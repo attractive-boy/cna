@@ -495,49 +495,49 @@ class _GeneratePageState extends State<GeneratePage> {
             //     ),
             //   ],
             // ),
-            const Divider(),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Activity Level: ',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                DropdownButton<String>(
-                  value: selectedOptions.activityLevel,
-                  icon: const Icon(Icons.arrow_downward),
-                  iconSize: 24,
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedOptions.activityLevel = newValue!;
-                    });
-                  },
-                  items: <String>[
-                    'Desk job, light exercise',
-                    'Lightly active, workout 3-4 times/week',
-                    'Active daily, frequent exercise',
-                    'Very Athletic',
-                    'Extremely Athletic'
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
+            // const Divider(),
+            // const Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: <Widget>[
+            //     Text(
+            //       'Activity Level: ',
+            //       style: TextStyle(fontSize: 18),
+            //     ),
+            //   ],
+            // ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: <Widget>[
+            //     DropdownButton<String>(
+            //       value: selectedOptions.activityLevel,
+            //       icon: const Icon(Icons.arrow_downward),
+            //       iconSize: 24,
+            //       elevation: 16,
+            //       style: const TextStyle(color: Colors.deepPurple),
+            //       underline: Container(
+            //         height: 2,
+            //         color: Colors.deepPurpleAccent,
+            //       ),
+            //       onChanged: (String? newValue) {
+            //         setState(() {
+            //           selectedOptions.activityLevel = newValue!;
+            //         });
+            //       },
+            //       items: <String>[
+            //         'Desk job, light exercise',
+            //         'Lightly active, workout 3-4 times/week',
+            //         'Active daily, frequent exercise',
+            //         'Very Athletic',
+            //         'Extremely Athletic'
+            //       ].map<DropdownMenuItem<String>>((String value) {
+            //         return DropdownMenuItem<String>(
+            //           value: value,
+            //           child: Text(value),
+            //         );
+            //       }).toList(),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
         isActive: _currentStep >= 4,
@@ -558,7 +558,7 @@ class _GeneratePageState extends State<GeneratePage> {
               ],
             ),
             const Text(
-              "Your account is setup and you're ready to begin using Eat This Much.",
+              "Your account is setup and you're ready to begin using nutrikid.",
               style: TextStyle(fontSize: 18),
             ),
           ],
